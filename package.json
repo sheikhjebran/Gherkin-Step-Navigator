@@ -1,5 +1,5 @@
 {
-  "name": "behave-gherkin-step-navigator",
+  "name": "behave-step-definition-navigator",
   "displayName": "Python Behave Gherkin Step Navigator",
   "description": "Navigate from Gherkin feature file steps to Python Behave step definitions with Go to Definition support",
   "version": "1.0.1",
