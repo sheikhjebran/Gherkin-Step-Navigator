@@ -1,0 +1,181 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "Gherkin",
+    "scopeName": "source.feature",
+    "fileTypes": ["feature"],
+    "patterns": [
+        { "include": "#comments" },
+        { "include": "#tags" },
+        { "include": "#feature" },
+        { "include": "#background" },
+        { "include": "#scenario" },
+        { "include": "#scenario_outline" },
+        { "include": "#rule" },
+        { "include": "#examples" },
+        { "include": "#steps" },
+        { "include": "#table" },
+        { "include": "#docstring" },
+        { "include": "#strings" },
+        { "include": "#placeholders" }
+    ],
+    "repository": {
+        "comments": {
+            "patterns": [
+                {
+                    "name": "comment.line.number-sign.gherkin",
+                    "match": "^\\s*#.*$"
+                }
+            ]
+        },
+        "tags": {
+            "patterns": [
+                {
+                    "name": "entity.name.tag.gherkin",
+                    "match": "@[\\w-]+"
+                }
+            ]
+        },
+        "feature": {
+            "patterns": [
+                {
+                    "name": "keyword.control.feature.gherkin",
+                    "match": "^\\s*(Feature|Fonctionnalité|Funktionalität|Funzionalità|Funcionalidade|Funcionalidad|機能|功能|기능|Функция|Функціонал|תכונה|ميزة|Fitur|Tính năng|Özellik|Właściwość)\\s*:"
+                }
+            ]
+        },
+        "background": {
+            "patterns": [
+                {
+                    "name": "keyword.control.background.gherkin",
+                    "match": "^\\s*(Background|Contexte|Grundlage|Contesto|Contexto|Cenário de Fundo|背景|배경|Предыстория|Передумова|רקע|الخلفية|Latar Belakang|Bối cảnh|Arka plan|Założenia)\\s*:"
+                }
+            ]
+        },
+        "scenario": {
+            "patterns": [
+                {
+                    "name": "keyword.control.scenario.gherkin",
+                    "match": "^\\s*(Scenario|Scénario|Szenario|Scenario|Cenário|Escenario|シナリオ|场景|시나리오|Сценарий|Сценарій|תרחיש|سيناريو|Skenario|Kịch bản|Senaryo|Scenariusz)\\s*:"
+                }
+            ]
+        },
+        "scenario_outline": {
+            "patterns": [
+                {
+                    "name": "keyword.control.scenario-outline.gherkin",
+                    "match": "^\\s*(Scenario Outline|Scenario Template|Scénario Outline|Szenariovorlage|Schema dello scenario|Esquema do Cenário|Esquema del escenario|シナリオアウトライン|场景大纲|시나리오 개요|Структура сценария|Структура сценарію|תבנית תרחיש|مخطط السيناريو|Kerangka Skenario|Khung kịch bản|Senaryo Taslağı|Szablon scenariusza)\\s*:"
+                }
+            ]
+        },
+        "rule": {
+            "patterns": [
+                {
+                    "name": "keyword.control.rule.gherkin",
+                    "match": "^\\s*(Rule|Règle|Regel|Regola|Regra|Regla|ルール|规则|규칙|Правило|כלל|قاعدة|Aturan|Quy tắc|Kural|Reguła)\\s*:"
+                }
+            ]
+        },
+        "examples": {
+            "patterns": [
+                {
+                    "name": "keyword.control.examples.gherkin",
+                    "match": "^\\s*(Examples|Scenarios|Exemples|Beispiele|Esempi|Exemplos|Ejemplos|例|예|Примеры|Приклади|דוגמאות|أمثلة|Contoh|Ví dụ|Örnekler|Przykłady)\\s*:"
+                }
+            ]
+        },
+        "steps": {
+            "patterns": [
+                {
+                    "name": "keyword.control.step.given.gherkin",
+                    "match": "^\\s*(Given|Soit|Etant donné|Etant donnée|Etant donnés|Etant données|Étant donné|Étant donnée|Étant donnés|Étant données|Angenommen|Gegeben sei|Gegeben seien|Dato|Dati|Data|Date|Dado|Dados|Dada|Dadas|前提|假如|假设|假定|조건|Допустим|Пусть|К тому же|Припустимо|בהינתן|بفرض|Diberikan|Diketahui|Cho|Diyelim ki|Mając|Zakładając)\\s+"
+                },
+                {
+                    "name": "keyword.control.step.when.gherkin",
+                    "match": "^\\s*(When|Quand|Lorsque|Lorsqu'|Wenn|Quando|Cuando|もし|当|만약|만일|Когда|Если|Коли|כאשר|عندما|متى|Ketika|Bila|Khi|Eğer|Jeśli|Kiedy|Gdy)\\s+"
+                },
+                {
+                    "name": "keyword.control.step.then.gherkin",
+                    "match": "^\\s*(Then|Alors|Dann|Allora|Então|Entonces|ならば|那么|그러면|Тогда|Тоді|אז|אזי|ثم|عندئذ|Maka|Kemudian|Thì|O zaman|Wtedy)\\s+"
+                },
+                {
+                    "name": "keyword.control.step.and.gherkin",
+                    "match": "^\\s*(And|Et|Und|E|Y|かつ|并且|而且|同时|그리고|И|К тому же|Та|וגם|و|Dan|Và|Ve|Oraz|I)\\s+"
+                },
+                {
+                    "name": "keyword.control.step.but.gherkin",
+                    "match": "^\\s*(But|Mais|Aber|Ma|Mas|Pero|しかし|但是|但|하지만|Но|Але|אבל|لكن|Tetapi|Tapi|Nhưng|Ama|Ale)\\s+"
+                },
+                {
+                    "name": "keyword.control.step.asterisk.gherkin",
+                    "match": "^\\s*\\*\\s+"
+                }
+            ]
+        },
+        "table": {
+            "patterns": [
+                {
+                    "name": "string.other.table.gherkin",
+                    "match": "^\\s*\\|.*\\|\\s*$",
+                    "captures": {
+                        "0": {
+                            "patterns": [
+                                {
+                                    "name": "punctuation.separator.table.gherkin",
+                                    "match": "\\|"
+                                },
+                                {
+                                    "name": "variable.parameter.table.gherkin",
+                                    "match": "[^|]+"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "docstring": {
+            "patterns": [
+                {
+                    "name": "string.quoted.triple.gherkin",
+                    "begin": "^\\s*\"\"\"",
+                    "end": "^\\s*\"\"\"",
+                    "patterns": [
+                        {
+                            "include": "#placeholders"
+                        }
+                    ]
+                },
+                {
+                    "name": "string.quoted.triple.gherkin",
+                    "begin": "^\\s*```",
+                    "end": "^\\s*```",
+                    "patterns": [
+                        {
+                            "include": "#placeholders"
+                        }
+                    ]
+                }
+            ]
+        },
+        "strings": {
+            "patterns": [
+                {
+                    "name": "string.quoted.double.gherkin",
+                    "match": "\"[^\"]*\""
+                },
+                {
+                    "name": "string.quoted.single.gherkin",
+                    "match": "'[^']*'"
+                }
+            ]
+        },
+        "placeholders": {
+            "patterns": [
+                {
+                    "name": "variable.parameter.placeholder.gherkin",
+                    "match": "<[^>]+>"
+                }
+            ]
+        }
+    }
+}

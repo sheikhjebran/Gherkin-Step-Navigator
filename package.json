@@ -1,0 +1,140 @@
+{
+  "name": "gherkin-step-navigator",
+  "displayName": "Gherkin Step Navigator",
+  "description": "Navigate from Gherkin feature file steps to Python Behave step definitions with Go to Definition support",
+  "version": "1.0.1",
+  "publisher": "jebran",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "gherkin",
+    "behave",
+    "cucumber",
+    "bdd",
+    "step definition",
+    "python",
+    "navigation"
+  ],
+  "activationEvents": [
+    "onLanguage:feature",
+    "workspaceContains:**/*.feature"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Gherkin Step Navigator",
+      "properties": {
+        "gherkinStepNavigator.stepDefinitionPaths": {
+          "type": "array",
+          "default": [
+            "**/steps/**/*.py",
+            "**/step_definitions/**/*.py",
+            "**/features/steps/**/*.py"
+          ],
+          "description": "Glob patterns to find Python step definition files"
+        },
+        "gherkinStepNavigator.stepDecorators": {
+          "type": "array",
+          "default": [
+            "@step",
+            "@given",
+            "@when",
+            "@then",
+            "@and",
+            "@but"
+          ],
+          "description": "Python decorators to recognize as step definitions"
+        },
+        "gherkinStepNavigator.enableHover": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable hover information for steps"
+        },
+        "gherkinStepNavigator.enableCodeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable CodeLens showing step definition file"
+        }
+      }
+    },
+    "languages": [
+      {
+        "id": "feature",
+        "aliases": [
+          "Gherkin",
+          "Feature"
+        ],
+        "extensions": [
+          ".feature"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "feature",
+        "scopeName": "source.feature",
+        "path": "./syntaxes/gherkin.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "gherkinStepNavigator.goToStepDefinition",
+        "title": "Go to Step Definition"
+      },
+      {
+        "command": "gherkinStepNavigator.refreshStepCache",
+        "title": "Refresh Step Definition Cache"
+      },
+      {
+        "command": "gherkinStepNavigator.findAllStepUsages",
+        "title": "Find All Step Usages"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "gherkinStepNavigator.goToStepDefinition",
+        "key": "f12",
+        "when": "editorTextFocus && resourceExtname == .feature"
+      },
+      {
+        "command": "gherkinStepNavigator.goToStepDefinition",
+        "key": "ctrl+click",
+        "mac": "cmd+click",
+        "when": "editorTextFocus && resourceExtname == .feature"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "@vscode/test-electron": "^2.3.8",
+    "@vscode/vsce": "^2.22.0",
+    "eslint": "^8.54.0",
+    "glob": "^10.3.10",
+    "mocha": "^10.2.0",
+    "typescript": "^5.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jebran/gherkin-step-navigator.git"
+  },
+  "license": "MIT"
+}
