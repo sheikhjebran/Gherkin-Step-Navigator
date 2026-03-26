@@ -1,9 +1,10 @@
 {
-  "name": "behave-step-definition-navigator",
+  "name": "behave-go-to-step",
   "displayName": "Python Behave Gherkin Step Navigator",
   "description": "Navigate from Gherkin feature file steps to Python Behave step definitions with Go to Definition support",
   "version": "1.0.1",
   "publisher": "SheikhArhaan",
+  "icon": "icon.png",
   "engines": {
     "vscode": "^1.85.0"
   },
