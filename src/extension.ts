@@ -16,6 +16,8 @@ import { Logger } from './utils/logger';
 
 let stepCache: StepDefinitionCache;
 let logger: Logger;
+let codeLensProviderDisposable: vscode.Disposable | undefined;
+let codeLensProvider: StepCodeLensProvider | undefined;
 
 export function activate(context: vscode.ExtensionContext): void {
     logger = new Logger('Gherkin Step Navigator');
@@ -50,16 +52,31 @@ export function activate(context: vscode.ExtensionContext): void {
         );
     }
 
-    // Register CodeLens provider
+    // Create CodeLens provider instance
+    codeLensProvider = new StepCodeLensProvider(stepCache, logger);
+
+    // Register CodeLens provider if enabled
     if (config.get<boolean>('enableCodeLens', true)) {
-        const codeLensProvider = new StepCodeLensProvider(stepCache, logger);
-        context.subscriptions.push(
-            vscode.languages.registerCodeLensProvider(
-                { language: 'feature', scheme: 'file' },
-                codeLensProvider
-            )
-        );
+        registerCodeLensProvider(context);
     }
+
+    // Listen for configuration changes to dynamically enable/disable CodeLens
+    context.subscriptions.push(
+        vscode.workspace.onDidChangeConfiguration((e) => {
+            if (e.affectsConfiguration('gherkinStepNavigator.enableCodeLens')) {
+                const newConfig = vscode.workspace.getConfiguration('gherkinStepNavigator');
+                const enableCodeLens = newConfig.get<boolean>('enableCodeLens', true);
+                
+                if (enableCodeLens && !codeLensProviderDisposable) {
+                    registerCodeLensProvider(context);
+                    logger.info('CodeLens provider enabled');
+                } else if (!enableCodeLens && codeLensProviderDisposable) {
+                    unregisterCodeLensProvider();
+                    logger.info('CodeLens provider disabled');
+                }
+            }
+        })
+    );
 
     // Register commands
     context.subscriptions.push(
@@ -223,7 +240,25 @@ function matchesPattern(stepText: string, pattern: string): boolean {
     }
 }
 
+function registerCodeLensProvider(context: vscode.ExtensionContext): void {
+    if (codeLensProvider && !codeLensProviderDisposable) {
+        codeLensProviderDisposable = vscode.languages.registerCodeLensProvider(
+            { language: 'feature', scheme: 'file' },
+            codeLensProvider
+        );
+        context.subscriptions.push(codeLensProviderDisposable);
+    }
+}
+
+function unregisterCodeLensProvider(): void {
+    if (codeLensProviderDisposable) {
+        codeLensProviderDisposable.dispose();
+        codeLensProviderDisposable = undefined;
+    }
+}
+
 export function deactivate(): void {
+    unregisterCodeLensProvider();
     if (logger) {
         logger.info('Extension deactivating...');
     }

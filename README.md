@@ -7,7 +7,7 @@ A VS Code extension that provides seamless navigation from Gherkin feature file 
 ### 🔗 Go to Definition (F12 / Ctrl+Click / Cmd+Click)
 Click on any step in a `.feature` file and navigate directly to the corresponding Python step definition.
 
-![Go to Definition Demo](images/go-to-definition.gif)
+![Go to Definition Demo](images/go-to-definition.svg)
 
 ### 📋 Hover Information
 Hover over a step to see details about the matching step definition, including:
@@ -16,10 +16,12 @@ Hover over a step to see details about the matching step definition, including:
 - The file location
 - The docstring (if available)
 
-![Hover Demo](images/hover.gif)
+![Hover Demo](images/hover.svg)
 
 ### 🔍 CodeLens
 Each step shows a CodeLens annotation above it indicating where the step definition is located. Click to navigate directly.
+
+> **Tip:** If you find the CodeLens annotations cluttering your `.feature` files, you can disable them by setting `gherkinStepNavigator.enableCodeLens` to `false` in your VS Code settings. The change takes effect immediately without requiring a reload.
 
 ### 🔄 Auto-refresh
 The extension automatically updates its cache when step definition files are modified.
@@ -84,7 +86,7 @@ Configure the extension in your VS Code settings:
     // Enable hover information for steps
     "gherkinStepNavigator.enableHover": true,
     
-    // Enable CodeLens showing step definition file
+    // Enable CodeLens showing step definition file (can be toggled without reload)
     "gherkinStepNavigator.enableCodeLens": true
 }
 ```
