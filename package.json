@@ -2,7 +2,7 @@
   "name": "behave-go-to-step",
   "displayName": "PyBehave Go To Step",
   "description": "Navigate from Gherkin feature file steps to Python Behave step definitions with Go to Definition support",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "publisher": "SheikhArhaan",
   "icon": "icon.png",
   "engines": {
@@ -135,7 +135,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jebran/gherkin-step-navigator.git"
+    "url": "https://github.com/sheikhjebran/Gherkin-Step-Navigator.git"
   },
   "license": "MIT"
 }
