@@ -191,15 +191,6 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 Sheikh Jebran
 
-## Changelog
-
-### 1.0.0
-- Initial release
-- Go to Definition support
-- Hover information
-- CodeLens integration
-- Automatic cache refresh
-
 ---
 
 **Enjoy!** 🚀
