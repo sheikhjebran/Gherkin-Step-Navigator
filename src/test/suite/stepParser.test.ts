@@ -18,7 +18,29 @@ suite('Step Parser Test Suite', () => {
         test('should match pattern with string parameter', () => {
             const regex = patternToRegex('the user "{username}" logs in');
             assert.ok(regex.test('the user "john" logs in'));
-            assert.ok(regex.test("the user 'admin' logs in"));
+            // Pattern with double quotes should match double-quoted values
+            assert.ok(!regex.test("the user 'admin' logs in"), 'double-quoted pattern should not match single quotes');
+        });
+
+        test('should match quoted parameter at end of pattern', () => {
+            const regex = patternToRegex('I receive the following keys with "{value_type}" values');
+            assert.ok(regex.test('I receive the following keys with "non-null" values'));
+            assert.ok(regex.test('I receive the following keys with "null" values'));
+            assert.ok(regex.test('I receive the following keys with "empty" values'));
+        });
+
+        test('should match single-quoted parameter', () => {
+            const regex = patternToRegex("the status is '{status}'");
+            assert.ok(regex.test("the status is 'active'"));
+            assert.ok(regex.test("the status is 'pending'"));
+        });
+
+        test('should match unquoted parameter with various formats', () => {
+            const regex = patternToRegex('I enter {value}');
+            // Unquoted placeholders should match quoted strings or non-whitespace
+            assert.ok(regex.test('I enter "hello"'));
+            assert.ok(regex.test("I enter 'world'"));
+            assert.ok(regex.test('I enter 123'));
         });
 
         test('should match pattern with integer parameter', () => {

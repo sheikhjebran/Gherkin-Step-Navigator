@@ -144,6 +144,7 @@ export function parseStepDefinitions(content: string, fileUri: vscode.Uri): Step
  * - {param:d} - Integer parameters
  * - {param:w} - Word parameters
  * - {param:S} - Non-whitespace parameters
+ * - "{param}" - Quoted parameters (quotes are part of the pattern)
  * - Regular expressions in the pattern
  */
 export function patternToRegex(pattern: string): RegExp {
@@ -156,27 +157,28 @@ export function patternToRegex(pattern: string): RegExp {
         }
     }
 
-    // Escape regex special characters except for our placeholders
+    // Use unique markers that won't conflict with parameter names containing underscores
+    // Markers use <<< and >>> as delimiters with :: as internal separator
     let regexStr = pattern
-        // First, temporarily replace placeholders
-        .replace(/\{([^}:]+)(?::([^}]+))?\}/g, '___PLACEHOLDER_$1_$2___')
+        // Handle double-quoted placeholders: "{param}" or "{param:type}"
+        .replace(/"\{([^}:]+)(?::([^}]+))?\}"/g, '<<<QUOTED_DOUBLE::$1::$2>>>')
+        // Handle single-quoted placeholders: '{param}' or '{param:type}'
+        .replace(/'\{([^}:]+)(?::([^}]+))?\}'/g, '<<<QUOTED_SINGLE::$1::$2>>>')
+        // Then handle remaining unquoted placeholders
+        .replace(/\{([^}:]+)(?::([^}]+))?\}/g, '<<<PLACEHOLDER::$1::$2>>>')
         // Escape regex special characters
         .replace(/[.+*?^${}()|[\]\\]/g, '\\$&')
-        // Restore and convert placeholders
-        .replace(/___PLACEHOLDER_([^_]+)_([^_]*)___/g, (_, name, type) => {
-            switch (type) {
-                case 'd':
-                    return '(-?\\d+)';
-                case 'w':
-                    return '(\\w+)';
-                case 'S':
-                    return '(\\S+)';
-                case 'f':
-                    return '(-?\\d+\\.?\\d*)';
-                default:
-                    // Default: match quoted strings or any non-whitespace
-                    return '(?:"([^"]*)"|\'([^\']*)\'|([^\\s]+))';
-            }
+        // Restore and convert double-quoted placeholders - match content between quotes
+        .replace(/<<<QUOTED_DOUBLE::([^:>]+)::([^>]*)>>>/g, (_, name, type) => {
+            return `"${getPlaceholderRegex(type, '"')}"`;
+        })
+        // Restore and convert single-quoted placeholders - match content between quotes
+        .replace(/<<<QUOTED_SINGLE::([^:>]+)::([^>]*)>>>/g, (_, name, type) => {
+            return `'${getPlaceholderRegex(type, "'")}'`;
+        })
+        // Restore and convert unquoted placeholders
+        .replace(/<<<PLACEHOLDER::([^:>]+)::([^>]*)>>>/g, (_, name, type) => {
+            return getPlaceholderRegex(type, null);
         });
 
     // Handle optional trailing content
@@ -187,6 +189,35 @@ export function patternToRegex(pattern: string): RegExp {
     } catch {
         // If regex compilation fails, create a simple pattern
         return new RegExp(`^${escapeRegex(pattern)}$`, 'i');
+    }
+}
+
+/**
+ * Get the regex pattern for a placeholder based on its type and context
+ * @param type The placeholder type (d, w, S, f, or empty/undefined)
+ * @param quoteChar The quote character if the placeholder is inside quotes, null otherwise
+ */
+function getPlaceholderRegex(type: string | undefined, quoteChar: string | null): string {
+    switch (type) {
+        case 'd':
+            return '(-?\\d+)';
+        case 'w':
+            return '(\\w+)';
+        case 'S':
+            return '(\\S+)';
+        case 'f':
+            return '(-?\\d+\\.?\\d*)';
+        default:
+            if (quoteChar === '"') {
+                // Inside double quotes: match anything except double quotes
+                return '([^"]*)';
+            } else if (quoteChar === "'") {
+                // Inside single quotes: match anything except single quotes
+                return "([^']*)";
+            } else {
+                // Not quoted: match quoted strings or any non-whitespace
+                return '(?:"([^"]*)"|\'([^\']*)\'|([^\\s]+))';
+            }
     }
 }
 
