@@ -60,11 +60,12 @@ The extension automatically updates its cache when step definition files are mod
 ### From VS Code Marketplace
 *(Coming soon)*
 
-## Configuration
 
-Configure the extension in your VS Code settings:
+## Configuration & Tips
 
-```json
+You can configure the extension in your VS Code settings (`settings.json`):
+
+```jsonc
 {
     // Glob patterns to find Python step definition files
     "gherkinStepNavigator.stepDefinitionPaths": [
@@ -72,7 +73,6 @@ Configure the extension in your VS Code settings:
         "**/step_definitions/**/*.py",
         "**/features/steps/**/*.py"
     ],
-    
     // Python decorators to recognize as step definitions
     "gherkinStepNavigator.stepDecorators": [
         "@step",
@@ -82,14 +82,40 @@ Configure the extension in your VS Code settings:
         "@and",
         "@but"
     ],
-    
     // Enable hover information for steps
     "gherkinStepNavigator.enableHover": true,
-    
     // Enable CodeLens showing step definition file (can be toggled without reload)
     "gherkinStepNavigator.enableCodeLens": true
 }
 ```
+
+### Usage Examples
+
+- **Go to Definition:** Place your cursor on a step in a `.feature` file and press `F12` or `Ctrl+Click` (Cmd+Click on Mac) to jump to the Python step definition.
+- **Hover:** Hover over a step to see the decorator, function, file, and docstring.
+- **CodeLens:** See clickable annotations above each step for quick navigation.
+- **Refresh Cache:** Run the `Gherkin Step Navigator: Refresh Step Cache` command from the Command Palette (`Ctrl+Shift+P`) if you add or remove step files.
+- **Find All Step Usages:** Place your cursor on a step definition in a Python file and run the `Find All Step Usages` command to see where it’s used in feature files.
+
+### Troubleshooting
+
+- **Step not found?**
+    - Make sure your step definition files match the configured glob patterns.
+    - Check that your step decorators are included in `gherkinStepNavigator.stepDecorators`.
+    - Try running the `Refresh Step Cache` command.
+- **Performance issues in large workspaces?**
+    - The extension now shows progress while building the cache. If you have thousands of step files, consider narrowing your glob patterns.
+- **No CodeLens or Hover?**
+    - Check that `enableCodeLens` and `enableHover` are set to `true` in your settings.
+- **Still having trouble?**
+    - Open the Output panel and select "Gherkin Step Navigator" for logs.
+    - File an issue on GitHub with details and logs.
+
+### Pro Tips
+
+- You can disable CodeLens or Hover features independently in your settings for a cleaner editing experience.
+- The extension automatically updates the cache when you save or change step files—manual refresh is rarely needed.
+
 
 ## Supported Step Definition Patterns
 

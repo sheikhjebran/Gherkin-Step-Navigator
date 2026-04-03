@@ -13,7 +13,7 @@ export class StepDefinitionCache {
     private cache: Map<string, StepDefinition[]> = new Map();
     private allDefinitions: StepDefinition[] = [];
     private logger: Logger;
-    private isBuilding: boolean = false;
+    private buildQueue: Promise<void> = Promise.resolve();
 
     constructor(logger: Logger) {
         this.logger = logger;
@@ -21,41 +21,62 @@ export class StepDefinitionCache {
 
     /**
      * Build the complete cache by scanning all Python step definition files
+     * Ensures only one build runs at a time (queued).
+     * Shows progress and errors to the user.
      */
     async buildCache(): Promise<void> {
-        if (this.isBuilding) {
-            return;
-        }
+        // Queue builds to avoid race conditions
+        this.buildQueue = this.buildQueue.then(() => this._buildCacheWithProgress());
+        return this.buildQueue;
+    }
 
-        this.isBuilding = true;
-        this.cache.clear();
-        this.allDefinitions = [];
-
-        try {
-            const config = vscode.workspace.getConfiguration('gherkinStepNavigator');
-            const patterns = config.get<string[]>('stepDefinitionPaths', [
-                '**/steps/**/*.py',
-                '**/step_definitions/**/*.py',
-                '**/features/steps/**/*.py'
-            ]);
-
-            this.logger.info(`Scanning for step definitions using patterns: ${patterns.join(', ')}`);
-
-            for (const pattern of patterns) {
-                const files = await vscode.workspace.findFiles(pattern, '**/node_modules/**');
-                this.logger.info(`Found ${files.length} files matching pattern: ${pattern}`);
-
-                for (const fileUri of files) {
-                    await this.parseAndCacheFile(fileUri);
+    private async _buildCacheWithProgress(): Promise<void> {
+        return vscode.window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: 'Building Gherkin step definition cache...',
+            cancellable: false
+        }, async (progress) => {
+            this.cache.clear();
+            this.allDefinitions = [];
+            try {
+                const config = vscode.workspace.getConfiguration('gherkinStepNavigator');
+                const patterns = config.get<string[]>('stepDefinitionPaths', [
+                    '**/steps/**/*.py',
+                    '**/step_definitions/**/*.py',
+                    '**/features/steps/**/*.py'
+                ]);
+                this.logger.info(`Scanning for step definitions using patterns: ${patterns.join(', ')}`);
+                let totalFiles = 0;
+                let processedFiles = 0;
+                // Count total files for progress
+                for (const pattern of patterns) {
+                    const files = await vscode.workspace.findFiles(pattern, '**/node_modules/**');
+                    totalFiles += files.length;
                 }
+                if (totalFiles === 0) {
+                    progress.report({ message: 'No step definition files found.' });
+                }
+                for (const pattern of patterns) {
+                    const files = await vscode.workspace.findFiles(pattern, '**/node_modules/**');
+                    this.logger.info(`Found ${files.length} files matching pattern: ${pattern}`);
+                    // Batch file processing for performance
+                    const batchSize = 10;
+                    for (let i = 0; i < files.length; i += batchSize) {
+                        const batch = files.slice(i, i + batchSize);
+                        await Promise.all(batch.map(fileUri => this.parseAndCacheFile(fileUri)));
+                        processedFiles += batch.length;
+                        progress.report({
+                            message: `Processed ${processedFiles} of ${totalFiles} files...`,
+                            increment: (batch.length / totalFiles) * 100
+                        });
+                    }
+                }
+                this.logger.info(`Cache built with ${this.allDefinitions.length} step definitions`);
+            } catch (error) {
+                this.logger.error(`Error building cache: ${error}`);
+                vscode.window.showErrorMessage('Failed to build Gherkin step definition cache. See output for details.');
             }
-
-            this.logger.info(`Cache built with ${this.allDefinitions.length} step definitions`);
-        } catch (error) {
-            this.logger.error(`Error building cache: ${error}`);
-        } finally {
-            this.isBuilding = false;
-        }
+        });
     }
 
     /**

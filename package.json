@@ -22,7 +22,6 @@
     "navigation"
   ],
   "activationEvents": [
-    "onLanguage:feature",
     "workspaceContains:**/*.feature"
   ],
   "main": "./out/extension.js",
