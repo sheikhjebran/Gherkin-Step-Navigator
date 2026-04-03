@@ -2,7 +2,7 @@
   "name": "behave-go-to-step",
   "displayName": "PyBehave Go To Step",
   "description": "Navigate from Gherkin feature file steps to Python Behave step definitions with Go to Definition support",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "publisher": "SheikhArhaan",
   "icon": "icon.png",
   "engines": {
