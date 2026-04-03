@@ -35,7 +35,7 @@ export class StepDefinitionCache {
             location: vscode.ProgressLocation.Notification,
             title: 'Building Gherkin step definition cache...',
             cancellable: false
-        }, async (progress) => {
+        }, async (progress: vscode.Progress<{ message?: string; increment?: number }>) => {
             this.cache.clear();
             this.allDefinitions = [];
             try {
@@ -63,7 +63,7 @@ export class StepDefinitionCache {
                     const batchSize = 10;
                     for (let i = 0; i < files.length; i += batchSize) {
                         const batch = files.slice(i, i + batchSize);
-                        await Promise.all(batch.map(fileUri => this.parseAndCacheFile(fileUri)));
+                        await Promise.all(batch.map((fileUri: vscode.Uri) => this.parseAndCacheFile(fileUri)));
                         processedFiles += batch.length;
                         progress.report({
                             message: `Processed ${processedFiles} of ${totalFiles} files...`,
